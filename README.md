@@ -45,6 +45,8 @@ func main() {
 }
 ```
 
+[[play](https://go.dev/play/p/Fie93MkAzmq)]
+
 ## Features
 
 - Create IDs from uint64, int64, and string representations.
