@@ -21,7 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/deloz/sig/v1"
+	"github.com/deloz/sid/v1"
 )
 
 func main() {
