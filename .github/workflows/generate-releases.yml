@@ -1,0 +1,28 @@
+name: generate-releases
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    permissions:
+      contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+      - uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611 # v1
+      - run: task docs:releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - uses: stefanzweifel/git-auto-commit-action@8756aa072ef5b4a080af5dc8fef36c5d586e521d # v4
+        with:
+          commit_message: "chore: docs releases json auto-update"
+          branch: main
+          commit_user_name: actions-user
+          commit_user_email: actions@github.com
+          commit_author: actions-user <actions@github.com>
