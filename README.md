@@ -7,7 +7,7 @@ The main purpose of SID is to seamlessly convert between a JSON-formatted string
 You can install SID using `go get`:
 
 ```bash
-go get github.com/deloz/sid/v1
+go get -u -v github.com/deloz/sid
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/deloz/sid/v1"
+	"github.com/deloz/sid"
 )
 
 func main() {

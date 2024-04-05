@@ -1,4 +1,4 @@
-module github.com/deloz/sig/v1
+module github.com/deloz/sid
 
 go 1.22.1
 
