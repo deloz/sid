@@ -1,6 +1,7 @@
 package sid
 
 import (
+	"fmt"
 	"sort"
 	"testing"
 
@@ -197,6 +198,18 @@ func TestID_Scan(t *testing.T) {
 			expected: ID(18283195028008204),
 			wantErr:  false,
 		},
+		{
+			name:     "Scan ID",
+			input:    ID(18283195028008204),
+			expected: ID(18283195028008204),
+			wantErr:  false,
+		},
+		{
+			name:     "Scan nil pointer",
+			input:    (*ID)(nil),
+			expected: ID(0),
+			wantErr:  false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -211,6 +224,7 @@ func TestID_Scan(t *testing.T) {
 				assert.NoError(t, err)
 			}
 
+			fmt.Printf("name: %s, input: %v, expected: %v, result id: %v\n", tt.name, tt.input, tt.expected, id)
 			assert.Equal(t, tt.expected, id)
 		})
 	}

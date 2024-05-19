@@ -5,7 +5,6 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 )
@@ -48,7 +47,7 @@ func NewFromUint64(v uint64) ID {
 // NewFromString creates a new ID from a string.
 func NewFromString(s string) (ID, error) {
 	if !reDigit.MatchString(s) {
-		return Zero, fmt.Errorf("can't convert %s to sid", s)
+		return Zero, fmt.Errorf("sid: can't convert %s to sid", s)
 	}
 
 	i, err := strconv.ParseUint(s, base, bitSize)
@@ -81,8 +80,6 @@ func (id *ID) UnmarshalText(b []byte) error {
 
 	i, err := NewFromString(s)
 	if err != nil {
-		log.Println("can't unmarshal text:", s, err, id, id.IsZero())
-
 		return err
 	}
 
@@ -132,7 +129,7 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 
 // Scan implements the sql.Scanner interface.
 func (id *ID) Scan(value any) error {
-	if value == nil {
+	if value == nil || value == (*ID)(nil) {
 		*id = Zero
 
 		return nil
@@ -148,6 +145,12 @@ func (id *ID) Scan(value any) error {
 		return nil
 	case uint64:
 		*id = NewFromUint64(val)
+		return nil
+	case ID:
+		*id = val
+		return nil
+	case *ID:
+		*id = *val
 		return nil
 	case nil:
 		*id = Zero
