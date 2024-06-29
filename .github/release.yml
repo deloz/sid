@@ -1,0 +1,29 @@
+# https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes#configuring-automatically-generated-release-notes
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - deloz
+  categories:
+    - title: Breaking Changes 🛠
+      labels:
+        - Semver-Major
+        - breaking-change
+    - title: Exciting New Features 🎉
+      labels:
+        - Semver-Minor
+        - enhancement
+    - title: Other Changes
+      labels:
+        - "*"
+    - title: 🏕 Features
+      labels:
+        - '*'
+      exclude:
+        labels:
+          - dependencies
+    - title: 👒 Dependencies
+      labels:
+        - dependencies
