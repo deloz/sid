@@ -22,7 +22,7 @@ jobs:
       # no pull request will be created and the action exits silently.
       - name: Create a Pull Request
         if: github.event_name != 'pull_request'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GH_TOKEN }}
           commit-message: "Update Go Collector metrics for new Go version"
