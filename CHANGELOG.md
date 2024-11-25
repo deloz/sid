@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/deloz/sid/compare/v1.0.3...v1.1.0) (2024-11-25)
+
+
+### Features
+
+* **deps:** bump github.com/stretchr/testify from 1.9.0 to 1.10.0 ([007e988](https://github.com/deloz/sid/commit/007e988544623eded0a3d7864a193fce18edf989))
+
 ## [Unreleased]
 
 ## [1.0.0] - 2024-04-05
