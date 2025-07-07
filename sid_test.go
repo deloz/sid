@@ -2,6 +2,7 @@ package sid
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"testing"
 
@@ -88,11 +89,11 @@ func TestID_LessThanOrEqual(t *testing.T) {
 func TestID_Value(t *testing.T) {
 	value, err := ID(18283195028008204).Value()
 	assert.NoError(t, err)
-	assert.Equal(t, uint64(18283195028008204), value)
+	assert.Equal(t, int64(18283195028008204), value)
 }
 
-func TestID_Uint64(t *testing.T) {
-	assert.Equal(t, uint64(18283195028008204), ID(18283195028008204).Uint64())
+func TestID_Int64(t *testing.T) {
+	assert.Equal(t, int64(18283195028008204), ID(18283195028008204).Int64())
 }
 
 func TestID_String(t *testing.T) {
@@ -101,11 +102,6 @@ func TestID_String(t *testing.T) {
 
 func TestNewFromInt64(t *testing.T) {
 	id := NewFromInt64(int64(18283195028008204))
-	assert.Equal(t, ID(18283195028008204), id)
-}
-
-func TestNewFromUint64(t *testing.T) {
-	id := NewFromUint64(uint64(18283195028008204))
 	assert.Equal(t, ID(18283195028008204), id)
 }
 
@@ -146,86 +142,33 @@ func TestNew(t *testing.T) {
 func TestID_Scan(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    interface{}
+		input    any
 		expected ID
 		wantErr  bool
 	}{
-		{
-			name:     "Scan uint64",
-			input:    uint64(18283195028008204),
-			expected: ID(18283195028008204),
-			wantErr:  false,
-		},
-		{
-			name:     "Scan string",
-			input:    "18283195028008204",
-			expected: ID(18283195028008204),
-			wantErr:  false,
-		},
-		{
-			name:     "Scan byte slice",
-			input:    []byte("18283195028008204"),
-			expected: ID(18283195028008204),
-			wantErr:  false,
-		},
-		{
-			name:     "Scan nil",
-			input:    nil,
-			expected: ID(0),
-			wantErr:  false,
-		},
-		{
-			name:     "Scan invalid string",
-			input:    "not a number",
-			expected: ID(0),
-			wantErr:  true,
-		},
-		{
-			name:     "Scan invalid byte slice",
-			input:    []byte("not a number"),
-			expected: ID(0),
-			wantErr:  true,
-		},
-		{
-			name:     "Scan invalid type",
-			input:    struct{}{},
-			expected: ID(0),
-			wantErr:  true,
-		},
-		{
-			name:     "Scan int64",
-			input:    int64(18283195028008204),
-			expected: ID(18283195028008204),
-			wantErr:  false,
-		},
-		{
-			name:     "Scan ID",
-			input:    ID(18283195028008204),
-			expected: ID(18283195028008204),
-			wantErr:  false,
-		},
-		{
-			name:     "Scan nil pointer",
-			input:    (*ID)(nil),
-			expected: ID(0),
-			wantErr:  false,
-		},
+		{"Scan uint64", uint64(18283195028008204), ID(18283195028008204), false},
+		{"Scan uint64 overflow", uint64(math.MaxInt64) + 1, ID(0), true},
+		{"Scan string", "18283195028008204", ID(18283195028008204), false},
+		{"Scan byte slice", []byte("18283195028008204"), ID(18283195028008204), false},
+		{"Scan nil", nil, ID(0), false},
+		{"Scan invalid string", "not a number", ID(0), true},
+		{"Scan invalid byte slice", []byte("not a number"), ID(0), true},
+		{"Scan invalid type", struct{}{}, ID(0), true},
+		{"Scan int64", int64(18283195028008204), ID(18283195028008204), false},
+		{"Scan ID", ID(18283195028008204), ID(18283195028008204), false},
+		{"Scan nil pointer", (*ID)(nil), ID(0), false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var id ID
-
 			err := id.Scan(tt.input)
-
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
+				assert.Equal(t, tt.expected, id, fmt.Sprintf("input=%v", tt.input))
 			}
-
-			fmt.Printf("name: %s, input: %v, expected: %v, result id: %v\n", tt.name, tt.input, tt.expected, id)
-			assert.Equal(t, tt.expected, id)
 		})
 	}
 }

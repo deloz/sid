@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 )
@@ -14,7 +15,7 @@ const (
 	base = 10
 	// bitSize is the size of the ID in bits.
 	bitSize = 64
-	// zero is the zero value of the ID in uint64.
+	// zero is the zero value of the ID in int64.
 	zero = 0
 )
 
@@ -26,21 +27,16 @@ var (
 )
 
 // ID represents a unique identifier.
-// It is a wrapper around an uint64.
-type ID uint64
+// It is a wrapper around an int64.
+type ID int64
 
-// New creates a new ID from an uint64.
-func New(v uint64) ID {
-	return NewFromUint64(v)
+// New creates a new ID from an int64.
+func New(v int64) ID {
+	return NewFromInt64(v)
 }
 
 // NewFromInt64 creates a new ID from an int64.
 func NewFromInt64(v int64) ID {
-	return NewFromUint64(uint64(v))
-}
-
-// NewFromUint64 creates a new ID from an uint64.
-func NewFromUint64(v uint64) ID {
 	return ID(v)
 }
 
@@ -50,9 +46,9 @@ func NewFromString(s string) (ID, error) {
 		return Zero, fmt.Errorf("sid: can't convert %s to sid", s)
 	}
 
-	i, err := strconv.ParseUint(s, base, bitSize)
+	i, err := strconv.ParseInt(s, base, bitSize)
 	if err != nil {
-		return Zero, fmt.Errorf("sid: can't convert %s to uint64", s)
+		return Zero, fmt.Errorf("sid: can't convert %s to int64", s)
 	}
 
 	return New(i), nil
@@ -116,10 +112,10 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 	}
 
 	// if it's not a string, it should be a number
-	var n uint64
+	var n int64
 
 	if err := json.Unmarshal(b, &n); err != nil {
-		return fmt.Errorf("sid: can't convert %s to uint64", string(b))
+		return fmt.Errorf("sid: can't convert %s to int64", string(b))
 	}
 
 	*id = New(n)
@@ -144,16 +140,16 @@ func (id *ID) Scan(value any) error {
 		*id = NewFromInt64(val)
 		return nil
 	case uint64:
-		*id = NewFromUint64(val)
+		if val > math.MaxInt64 {
+			return fmt.Errorf("sid: uint64 value %d overflows int64", val)
+		}
+		*id = NewFromInt64(int64(val))
 		return nil
 	case ID:
 		*id = val
 		return nil
 	case *ID:
 		*id = *val
-		return nil
-	case nil:
-		*id = Zero
 		return nil
 	default:
 		return fmt.Errorf("sid: can't convert %T to ID", value)
@@ -215,17 +211,17 @@ func (id ID) LessThanOrEqual(v ID) bool {
 
 // Value implements the driver.Valuer interface.
 func (id ID) Value() (driver.Value, error) {
-	return id.Uint64(), nil
+	return id.Int64(), nil
 }
 
-// Uint64 returns the ID as a uint64.
-func (id ID) Uint64() uint64 {
-	return uint64(id)
+// Int64 returns the ID as a int64.
+func (id ID) Int64() int64 {
+	return int64(id)
 }
 
 // String returns the ID as a string.
 func (id ID) String() string {
-	return strconv.FormatUint(uint64(id), base)
+	return strconv.FormatInt(id.Int64(), base)
 }
 
 // IDs implements sort.Interface for converting a slice of ID.

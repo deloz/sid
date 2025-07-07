@@ -1,6 +1,6 @@
 # SID
 
-The main purpose of SID is to seamlessly convert between a JSON-formatted string representation of an ID and its uint64 counterpart when interacting with a database.
+The main purpose of SID is to seamlessly convert between a JSON-formatted string representation of an ID and its int64 counterpart when interacting with a database.
 
 ## Installation
 
@@ -49,10 +49,8 @@ func main() {
 
 ## Features
 
-- Create IDs from uint64, int64, and string representations.
-- Marshal and unmarshal IDs to/from JSON and text.
-- Compare IDs.
-- Sort slices of IDs.
+- Support creation of IDs from `uint64` (up to `math.MaxInt64`), `int64`, and numeric string representations.
+- Implement JSON (de)serialization, comparison, and sorting for custom ID types in Go.
 
 ## Contributing
 
