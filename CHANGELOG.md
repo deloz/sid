@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/deloz/sid/compare/v1.1.0...v1.2.0) (2025-07-07)
+
+
+### Features
+
+* add NewFromUint64 function to create ID from uint64 ([a3cb5ea](https://github.com/deloz/sid/commit/a3cb5ea09d11f5afc85712e12e237542293a650a))
+
 ## [1.1.0](https://github.com/deloz/sid/compare/v1.0.3...v1.1.0) (2024-11-25)
 
 
