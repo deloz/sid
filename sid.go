@@ -40,6 +40,15 @@ func NewFromInt64(v int64) ID {
 	return ID(v)
 }
 
+// NewFromUint64 creates a new ID from a uint64.
+func NewFromUint64(v uint64) (ID, error) {
+	if v > math.MaxInt64 {
+		return Zero, fmt.Errorf("sid: uint64 value %d overflows int64", v)
+	}
+
+	return NewFromInt64(int64(v)), nil
+}
+
 // NewFromString creates a new ID from a string.
 func NewFromString(s string) (ID, error) {
 	if !reDigit.MatchString(s) {
